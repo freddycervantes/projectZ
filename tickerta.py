@@ -1,4 +1,4 @@
-# Owner-Alexander Kern
+# Owner-Alexander Kern, Freddy Cervantes
 # This project is open to anyone
 
 # Dependencies
@@ -24,8 +24,8 @@ class StockDev:
         self.__find_linear_function(self)
 
     def say_state(self):
-        print("The current linear line is y = {}x + {}, and the standard deviation is {}".format(self.__m, self.__b,
-                                                                                                 self.__std))
+        print("The current linear line is y = {}x + {}, and the standard\
+         deviation is {}".format(self.__m, self.__b, self.__std))
 
     def todays_deviation(self):
         frommean = self.__logy[self.__numDays - 1] - (len(self.__logy) - 1) * self.__m - self.__b
@@ -63,7 +63,7 @@ class StockDev:
         self.__b = b[1]
 
     @staticmethod
-    def __get_dates_5year(self):
+    def __get_dates_5year():
         end = datetime.today()
         end = datetime(end.year + 1, 1, 1)
         start = datetime(end.year - 5, 1, 1)
@@ -90,6 +90,9 @@ class StockDev:
         plt.figure(1)
         plt.plot(self.__logy, 'k')
         line = [i * self.__m + self.__b for i in range(self.__numDays)]
+        # Blue is the line of regression
+        # Green is 1 standard deviation
+        # Red is 2 sd.
         plt.plot(line, 'b')
         plt.plot([i - self.__std for i in line], 'g')
         plt.plot([i + self.__std for i in line], 'g')
@@ -99,10 +102,8 @@ class StockDev:
         plt.show()
 
 
-
-
 if __name__ == '__main__':
-    spx = StockDev("SPY")
-    spx.say_state()
-    spx.plot_with_dev()
-    print(spx.todays_deviation())
+    spy = StockDev("SPY")
+    spy.say_state()
+    print(spy.todays_deviation())
+    spy.plot_with_dev()
