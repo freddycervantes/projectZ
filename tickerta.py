@@ -13,6 +13,7 @@ from iexfinance.stocks import get_historical_data
 class StockDev:
 
     def __init__(self, ticker):
+        self.__state = True
         self.__ticker = ticker
         self.__m = 0
         self.__b = 0
@@ -27,6 +28,17 @@ class StockDev:
         print("The current linear line is y = {}x + {}, and the standard\
          deviation is {}".format(self.__m, self.__b, self.__std))
 
+    def exists(self):
+        return self.__state
+
+    def return_state(self):
+        frommean = self.__logy[self.__numDays - 1] - (len(self.__logy) - 1) * self.__m - self.__b
+        frommean = frommean / self.__std
+        return "{}: \n\n" \
+               "todays price: ${}\n\n" \
+               "price is {} deviation/s from the 5 year linear mean".format(
+            self.__ticker, self.__todayPrice, frommean)
+
     def todays_deviation(self):
         frommean = self.__logy[self.__numDays - 1] - (len(self.__logy) - 1) * self.__m - self.__b
         frommean = frommean / self.__std
@@ -39,7 +51,7 @@ class StockDev:
     # Finds historical data for the spx from today to 5 years ago
     @staticmethod
     def __find_linear_function(self):
-        start, end = self.__get_dates_5year(self)
+        start, end = self.__get_dates_5year()
         # Make array for "y" outputs
         y = self.__logy_outputs(self, start, end)
         self.__linear_coefficents(self, list(y))
@@ -75,14 +87,15 @@ class StockDev:
             data = get_historical_data(self.__ticker, start, end)
         except:
             print("{} is not availible or does not exist".format(self.__ticker))
-            exit(2)
+            data = {"key1": {'close': 1}, "key2": {'close': 2},"key3": {'close': 4},}
+            self.__state = False
         self.__dates = data.keys()
         y = []
         for i in data.keys():
             y += [np.log(data[i]['close'])]
         self.__logy = list(y)
         self.__numDays = len(y)
-        self.__todayPrice = y[self.__numDays - 1]
+        self.__todayPrice = np.exp(y[self.__numDays - 1])
         return y
 
     def plot_with_dev(self):
@@ -102,8 +115,13 @@ class StockDev:
         plt.show()
 
 
+
 if __name__ == '__main__':
-    spy = StockDev("SPY")
+
+    spy = StockDev("F")
     spy.say_state()
     print(spy.todays_deviation())
     spy.plot_with_dev()
+
+    print("welcome")
+
