@@ -88,17 +88,19 @@ class Fetch:
         False
         """
         lis = self.five_year_dates("SPY")
-        lis = lis[len(lis) - 65:]
-        min_date_index = 64
-        curr_index = 32
-        add_sub =32
+        lis = lis[len(lis) - 129:]
+        min_date_index = 128
+        curr_index = 64
+        add_sub = 32
         while add_sub >= 0.9:
-            if self.vaild_intraday_day("SPY", lis[curr_index]):
+            if self.vaild_intraday_day("SPY", lis[curr_index]):     # Binary search method
                 min_date_index = curr_index
                 curr_index -= int(add_sub)
             else:
                 curr_index += int(add_sub)
             add_sub /= 2
+        if self.vaild_intraday_day("SPY", lis[curr_index]):         # Checks the tail case
+            min_date_index = curr_index
         return lis[min_date_index:]
 
     def vaild_intraday_day(self,name, day):
