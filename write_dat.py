@@ -49,19 +49,18 @@ class Write:
         """
         import sqlite3
         dbconn = sqlite3.connect('stockdata.db')
-        dbcur = dbconn.cursor()
-        dbcur.execute("""
+        c = dbconn.cursor()
+        c.execute("""
                 SELECT COUNT(*)
                 FROM onRecord
                 WHERE stock = '{0}'
                 """.format(tablename))
-        if dbcur.fetchone()[0] == 1:                    # I dunno, I think in 5 years I could figure out what this does
-            dbcur.close()
+        if c.fetchone()[0] == 1:                    # I dunno, I think in 5 years I could figure out what this does
+            c.close()
             return True
-        dbcur.close()
+        c.close()
         dbconn.close()
         return False
-
 
 
 if __name__=="__main__":
