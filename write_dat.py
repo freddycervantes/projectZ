@@ -10,10 +10,9 @@ class Write:
         """
         creates a database and table if they do not exist
         """
-        import format
-        self.__F = format.Format()
-        import sqlite3
-        dbconn = sqlite3.connect('stockdata.db')  # Opens up database, creates one if it does not exist
+        self.__F = self.__import_format()
+        self.__db = self.__import_sqlite()
+        dbconn = self.__db.connect('stockdata.db')  # Opens up database, creates one if it does not exist
         c = dbconn.cursor()
         try:
             # checks to see if onRecord exists, creates the table if it does not
@@ -24,6 +23,13 @@ class Write:
         c.close()
         dbconn.commit()
         dbconn.close()
+
+    def __import_format(self):
+        import format
+        return format.Format()
+    def __import_sqlite(self):
+        import sqlite3
+        return sqlite3
 
     def day_in_database(self, day, name):
         """
@@ -125,8 +131,7 @@ class Write:
         """
         if not self.table_exists(name):                 # does the table exist at all?
             return False
-        import sqlite3
-        dbconn = sqlite3.connect('stockdata.db')
+        dbconn = self.__db.connect('stockdata.db')
         c = dbconn.cursor()
         c.execute("""
                     SELECT COUNT(*)
@@ -162,23 +167,21 @@ class Write:
         True
         >>> t.remove_table("SPX")
         """
-        import sqlite3
-        dbconn = sqlite3.connect('stockdata.db')
+        dbconn = self.__db.connect('stockdata.db')
         c = dbconn.cursor()
         if not self.table_exists(name):                   # if not in database, create it
             self.create_table(name)
-        elif self.key_in_table(name, sqlkey):
+        elif self.key_in_table(name, sqlkey):             # is the key in the table!? alright nm we got it
             c.close()
             dbconn.close()
             return False
-        c.execute(self.__F.write_data(name, sqlkey, data))
+        c.execute(self.__F.write_intraday_data(name, sqlkey, data))
         c.close()
         dbconn.commit()
         dbconn.close()
         return True
 
-    @staticmethod
-    def table_exists(tablename):
+    def table_exists(self, tablename):
         """
         Ensures the table exist from the onRecord table.
         :return: boolean function
@@ -187,19 +190,19 @@ class Write:
         >>> c = dbconn.cursor()
         >>> x = c.execute("INSERT INTO onRecord VALUES ('TEST')")
         >>> dbconn.commit()
-        >>> Write.table_exists("TEST")
+        >>> t = Write()
+        >>> t.table_exists("TEST")
         True
-        >>> Write.table_exists("test1")
+        >>> t.table_exists("test1")
         False
         >>> x = c.execute("DELETE FROM onRecord WHERE stock = 'TEST'")
         >>> dbconn.commit()
-        >>> Write.table_exists("TEST")
+        >>> t.table_exists("TEST")
         False
         >>> c.close()
         >>> dbconn.close()
         """
-        import sqlite3
-        dbconn = sqlite3.connect('stockdata.db')
+        dbconn = self.__db.connect('stockdata.db')
         c = dbconn.cursor()
         c.execute("""
                 SELECT COUNT(*)
@@ -226,8 +229,7 @@ class Write:
         False
         >>> t.remove_table("SPX")
         """
-        import sqlite3
-        dbconn = sqlite3.connect('stockdata.db')
+        dbconn = self.__db.connect('stockdata.db')
         c = dbconn.cursor()
         if self.table_exists(name):               #avoids redundancy
             return False
@@ -241,24 +243,22 @@ class Write:
         dbconn.close()
         return True
 
-    @staticmethod
-    def remove_table(name):
+    def remove_table(self, name):
         """
         tableflip.jpg
         :param name: ticker
         >>> t = Write()
         >>> t.create_table("SPX")
         True
-        >>> Write.table_exists("SPX")
+        >>> t.table_exists("SPX")
         True
-        >>> Write.remove_table("SPX")
-        >>> Write.table_exists("SPX")
+        >>> t.remove_table("SPX")
+        >>> t.table_exists("SPX")
         False
         """
-        import sqlite3
-        dbconn = sqlite3.connect('stockdata.db')
+        dbconn = self.__db.connect('stockdata.db')
         c = dbconn.cursor()
-        c.execute("DELETE FROM onRecord WHERE stock = '{}'".format(name))   # Whether it exists or not does not matter papa bless
+        c.execute("DELETE FROM onRecord WHERE stock = '{}'".format(name))   # Wether it exists or not does not matter papa bless
         try:
             c.execute("DROP TABLE {}".format(name))                         # produces error if not exicutible. SAD!
             dbconn.commit()

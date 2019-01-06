@@ -29,7 +29,6 @@ class Fetch:
         """
         return self.__iex.stocks.get_historical_intraday(name, date)
 
-
     def intraday_volume(self, name, date):
         """
         need to update tests every 3 months
@@ -65,6 +64,58 @@ class Fetch:
         """
         start, end = self.__date_tool.five_years()
         return self.__iex.stocks.get_historical_data(name, start, end)
+
+    def five_year_dates(self, name):
+        """
+        :param name: Ticker
+        :return: list of datetime.datetime(year, month, day)'s
+
+        """
+        raw = list(self.get_five_year_raw(name).keys())
+        return [self.__date_tool.get_date(int(i[0:4]), int(i[5:7]), int(i[8:10])) for i in raw]
+
+    def list_valid_intraday_dates(self):
+        """
+        :return: List of valid intraday dates
+        Binary search for smallest dates possible
+        >>> F = Fetch()
+        >>> import occasion
+        >>> O = occasion.Occasion()
+        >>> l = F.list_valid_intraday_dates()
+        >>> O.get_date(2019, 1, 3) in l
+        True
+        >>> O.get_date(2019, 1, 1) in l
+        False
+        """
+        lis = self.five_year_dates("SPY")
+        lis = lis[len(lis) - 65:]
+        min_date_index = 64
+        curr_index = 32
+        add_sub =32
+        while add_sub >= 0.9:
+            if self.vaild_intraday_day("SPY", lis[curr_index]):
+                min_date_index = curr_index
+                curr_index -= int(add_sub)
+            else:
+                curr_index += int(add_sub)
+            add_sub /= 2
+        return lis[min_date_index:]
+
+    def vaild_intraday_day(self,name, day):
+        """
+        :param day: datetime.datetime(year, month, day)
+        :param name: Ticker
+        :return: smallest list possible
+        >>> import occasion
+        >>> O = occasion.Occasion()
+        >>> F = Fetch()
+        >>> F.vaild_intraday_day("SPY", O.get_date(2019, 1, 3))
+        True
+        >>> F.vaild_intraday_day("SPY", O.get_date(2019, 1, 1))
+        False
+        """
+        return self.__iex.stocks.get_historical_intraday(name, day) != []
+
 
 
 if __name__=="__main__":
