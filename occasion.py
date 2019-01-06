@@ -2,7 +2,6 @@
 ONLY file that uses datetime. tip your waitress
 """
 
-import datetime
 
 class Occasion:
 

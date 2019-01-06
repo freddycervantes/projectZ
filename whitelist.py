@@ -31,6 +31,19 @@ class GetItems:
         """
         return list(self.__stockKeys.keys())
 
+    def whitelisted(self, name):
+        """
+        :param name: Ticker
+        :return: True if it is okay
+        >>> x = GetItems()
+        >>> x.whitelisted("VZ")
+        True
+        >>> x.whitelisted("VJLKJ")
+        False
+        """
+        x = self.approved_stocks()
+        return name in x
+
 
 if __name__=="__main__":
     import doctest
