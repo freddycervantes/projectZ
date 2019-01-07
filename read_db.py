@@ -33,6 +33,8 @@ class Read:
         c = conn.cursor()
         c.execute(self.__F.read_intraday_table_all(name))
         raw = [list(i) for i in c.fetchall()]
+        c.close()
+        conn.close()
         clensed = []
         for i in raw:
             clensed += i[1:]
