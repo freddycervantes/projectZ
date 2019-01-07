@@ -92,7 +92,7 @@ class StockDev:
         self.__dates = data.keys()
         y = []
         for i in data.keys():
-            y += [np.log(data[i]['close'])]
+            y += [data[i]['close']]
         self.__logy = list(y)
         self.__numDays = len(y)
         self.__todayPrice = np.exp(y[self.__numDays - 1])

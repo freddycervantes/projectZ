@@ -19,7 +19,19 @@ class GetItems:
                     'DIS': 'Disney', 'MRK': 'Merck & Co. Inc.', 'TRV': 'Travelers Cos. Inc.',
                     'HD': 'Home Depot', 'CVX': 'Cheveron', 'KO': 'Coka Cola', 'MCD': 'McHeartattacks',
                     'JNJ': 'Jhonson & Jhonson','UNH': 'UnitedHealth Group', 'K': 'Kellog', 'XRX': 'Xerox',
-                    'RIG': "They drill the ocean" }
+                    'RIG': "Transocean Inc", 'C' : 'Citygroup', 'WFC': 'Wells Fargo', 'CMCSA': 'Comcast',
+                    'ET': 'Energy Tranfer Corp', 'AKS': 'AK Steel', 'NVAX': 'Novavax Inc',
+                    'DNR': 'Denbury Resorces', 'RF': 'Regions Financal Corp', 'HAL': 'Haliburton Co',
+                    'AMAT': 'Applied Materials', 'ROKU': 'Roku Inc', 'OAS': 'Oasis Inc', 'ESV': 'Ensoc Pic',
+                    'EBAY': 'Figure it out youself', 'MRO': 'Maraton Oil Corp', 'MS': 'Morgan Stanley',
+                    'TSM': 'Tai Semi Manufacuring', 'QCOM': 'Qualcomm', 'MRVL': 'Marvell tech group',
+                    'FCAU': 'Fiat Chrysler Automobiles N.V.', 'ZNGA': 'Zynga', 'AUY': 'Aumana Gold',
+                    'KMI': 'Kinder Morgan', 'BBD': 'Banco bradesco', 'SBUX': 'Starbucks', 'S': 'Sprint',
+                    'GME': 'Gamestop', 'MGM': 'Hotel and casino', 'IQ': 'Iqiyi Inc', 'EQT': 'EQT Corp',
+                    'COG': 'Cabot Oil & Gas', 'HPE': 'Hewlett Pakard', 'TEVA': 'TEVA Pharmaceutical', 'HBAN': 'Huntington Bcshs',
+                    'MAT': 'Mattel', 'Dal': 'Delta air line', 'EPD': 'Enterprise Product Partners', 'X': 'US Steel',
+                    'PE': 'Parley Energy', 'LYG': 'Lloyds Banking', 'TAK': 'Takeda Pharm', 'NLY': 'Annaly Capital',
+                    'FOXA': 'Fox Net', 'MO': 'Altria Gropu', 'RRC': 'Range Resoruces', 'KR': 'Kroger Co'}
 
     def approved_stocks(self):
         """

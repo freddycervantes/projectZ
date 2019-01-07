@@ -27,6 +27,7 @@ class Write:
     def __import_format(self):
         import format
         return format.Format()
+
     def __import_sqlite(self):
         import sqlite3
         return sqlite3

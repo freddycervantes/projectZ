@@ -39,11 +39,11 @@ class Update:
         if name not in self.__stock_list:
             return False
         for i in reversed(self.__intra_dates):
-            print(name)
+
             if self.__W.day_in_database(i, name):
                 return True
             print(self.__W.store3(name, i, self.__F.intraday_average_price(name, i)))
-            print(i)
+            print(name)
         return True
 
     def update_all(self):

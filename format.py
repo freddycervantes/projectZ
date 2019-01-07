@@ -8,6 +8,36 @@ class Format:
     def __init__(self):
         self.__x = 5
 
+    def read_intraday_table_all(self, name):
+        """
+        :param name: Ticker
+        :return: FormatProper
+        >>> F = Format()
+        >>> F.read_intraday_table_all("SPY")
+        'SELECT * FROM SPY ORDER BY date'
+        """
+        return 'SELECT * FROM {} ORDER BY date'.format(name)
+
+    def read_intraday_table_select_dates(self, name, start_day, end_day):
+        """
+        :param name:
+        :param start_day:
+        :param end_day:
+        :return:
+        >>> import occasion
+        >>> F = Format()
+        >>> O = occasion.Occasion()
+        >>> F.read_intraday_table_select_dates("SPY", F.write_date(O.get_date(2018, 12, 15)),
+        ...             F.write_date(O.get_date(2019, 1, 1)))
+        'SELECT * FROM SPY WHERE date >= 20181215 AND date < 20190101 ORDER BY date'
+        >>> F.read_intraday_table_select_dates("SPY", F.write_date(O.get_date(2018, 12, 15)),
+        ...             F.write_date(O.get_date(2017, 1, 1)))
+        False
+        """
+        if start_day >= end_day:
+            return False
+        return "SELECT * FROM {} WHERE date >= {} AND date < {} ORDER BY date".format(name, start_day, end_day)
+
     def write_intraday_table(self, name):
         """
         Takes in name and formats it for sqlite table creation
