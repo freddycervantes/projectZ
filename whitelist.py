@@ -18,7 +18,8 @@ class GetItems:
                     'IBM': 'IBM', 'XOM': "Exxon Mobile", 'JPM': 'JPMorgan', 'UTX': 'United Technologies Corp',
                     'DIS': 'Disney', 'MRK': 'Merck & Co. Inc.', 'TRV': 'Travelers Cos. Inc.',
                     'HD': 'Home Depot', 'CVX': 'Cheveron', 'KO': 'Coka Cola', 'MCD': 'McHeartattacks',
-                    'JNJ': 'Jhonson & Jhonson','UNH': 'UnitedHealth Group'}
+                    'JNJ': 'Jhonson & Jhonson','UNH': 'UnitedHealth Group', 'K': 'Kellog', 'XRX': 'Xerox',
+                    'RIG': "They drill the ocean" }
 
     def approved_stocks(self):
         """

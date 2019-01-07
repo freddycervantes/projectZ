@@ -64,16 +64,16 @@ class Write:
         >>> m = Write()
         >>> m.store3(ticker, date, x)
         False
-        >>> ticker = "MMM"
+        >>> ticker = "XRX"
         >>> x = [i['average'] for i in get_historical_intraday(ticker, date)]
         >>> m.store3(ticker, date, x)
         True
         >>> m.store3(ticker, date, [])
         False
-        >>> m.remove_table("MMM")
+        >>> m.remove_table(ticker)
         >>> m.store3(ticker, date, [1])
         True
-        >>> m.remove_table("MMM")
+        >>> m.remove_table(ticker)
         """
         if len(data) == 0:
             return False
