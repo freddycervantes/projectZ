@@ -19,20 +19,28 @@ class StockDev:
         self.__b = 0
         self.__std = 0
         self.__todayPrice = 0
-        self.__logy = []
+        self.__y = []
         self.__numDays = 0
         self.__dates = []
+        self.__std_from_mean = 0
         self.__find_linear_function(self)
+        self.__find_standard_deviation_from_mean()
+
+    def get_dev_from_mean(self):
+        return abs(self.__std_from_mean)
+
+    def __find_standard_deviation_from_mean(self):
+        frommean = self.__y[self.__numDays - 1] - (len(self.__y) - 1) * self.__m - self.__b
+        self.__std_from_mean = frommean / self.__std
 
     def say_state(self):
-        print("The current linear line is y = {}x + {}, and the standard\
-         deviation is {}".format(self.__m, self.__b, self.__std))
+        print("The current linear line is y = {}x + {}, and the standard deviation is {}".format(self.__m, self.__b, self.__std))
 
     def exists(self):
         return self.__state
 
     def return_state(self):
-        frommean = self.__logy[self.__numDays - 1] - (len(self.__logy) - 1) * self.__m - self.__b
+        frommean = self.__y[self.__numDays - 1] - (len(self.__y) - 1) * self.__m - self.__b
         frommean = frommean / self.__std
         return "{}: \n\n" \
                "todays price: ${}\n\n" \
@@ -40,7 +48,7 @@ class StockDev:
             self.__ticker, self.__todayPrice, frommean)
 
     def todays_deviation(self):
-        frommean = self.__logy[self.__numDays - 1] - (len(self.__logy) - 1) * self.__m - self.__b
+        frommean = self.__y[self.__numDays - 1] - (len(self.__y) - 1) * self.__m - self.__b
         frommean = frommean / self.__std
         print("std: {}, price {} at {} deviation/s from the mean".format(
               self.__std, list(self.__dates)[self.__numDays - 1], frommean))
@@ -90,7 +98,7 @@ class StockDev:
         y = []
         for i in data.keys():
             y += [data[i]['close']]
-        self.__logy = list(y)
+        self.__y = list(y)
         self.__numDays = len(y)
         self.__todayPrice = np.exp(y[self.__numDays - 1])
         return y
@@ -98,7 +106,7 @@ class StockDev:
     def plot_with_dev(self):
         plt.close(1)
         plt.figure(1)
-        plt.plot(self.__logy, 'k')
+        plt.plot(self.__y, 'k')
         line = [i * self.__m + self.__b for i in range(self.__numDays)]
         # Blue is the line of regression
         # Green is 1 standard deviation
@@ -114,10 +122,9 @@ class StockDev:
 
 
 if __name__ == '__main__':
-
-    spy = StockDev("BAC")
+    spy = StockDev("TRV")
     spy.say_state()
-    print(spy.todays_deviation())
+    print(spy.get_dev_from_mean())
     spy.plot_with_dev()
 
     print("welcome")

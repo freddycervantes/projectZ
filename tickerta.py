@@ -23,7 +23,6 @@ class StockDev:
         self.__find_linear_function(self.__ticker)
 
     def get_dev_from_mean(self):
-
         return abs(self.__dev_from_mean)
 
     def plot_with_dev(self):
@@ -85,8 +84,7 @@ class StockDev:
 
 
 if __name__ == '__main__':
-
-    spy = StockDev("BAC")
+    spy = StockDev("TRV")
     spy.say_state()
     spy.plot_with_dev()
     print("welcome")

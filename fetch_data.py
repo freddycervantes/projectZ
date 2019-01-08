@@ -101,6 +101,8 @@ class Fetch:
             add_sub /= 2
         if self.vaild_intraday_day("SPY", lis[curr_index]):         # Checks the tail case
             min_date_index = curr_index
+        if self.__date_tool.today() not in lis and self.vaild_intraday_day("SPY", self.__date_tool.today()):
+            return lis[min_date_index:] + [self.__date_tool.today()]
         return lis[min_date_index:]
 
     def vaild_intraday_day(self,name, day):
