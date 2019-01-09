@@ -1,5 +1,4 @@
-# Owner-Alexander Kern, Freddy Cervantes
-# This project is open to anyone
+# Owner-Alexander Kern, Freddy Cervantes, Haitou Zhu
 
 # Dependencies
 
@@ -84,7 +83,7 @@ class StockDev:
 
 
 if __name__ == '__main__':
-    spy = StockDev("TRV")
+    spy = StockDev("CHK")
     spy.say_state()
     spy.plot_with_dev()
     print("welcome")

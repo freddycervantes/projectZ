@@ -72,7 +72,7 @@ class Fetch:
 
         """
         raw = list(self.get_five_year_raw(name).keys())
-        return [self.__date_tool.get_date(int(i[0:4]), int(i[5:7]), int(i[8:10])) for i in raw]
+        return [self.__date_tool.get_date(int(i[0:4]), int(i[5:7]), int(i[8:10])) for i in raw if i != self.__date_tool.today()]
 
     def list_valid_intraday_dates(self):
         """
@@ -101,8 +101,8 @@ class Fetch:
             add_sub /= 2
         if self.vaild_intraday_day("SPY", lis[curr_index]):         # Checks the tail case
             min_date_index = curr_index
-        if self.__date_tool.today() not in lis and self.vaild_intraday_day("SPY", self.__date_tool.today()):
-            return lis[min_date_index:] + [self.__date_tool.today()]
+        if self.__date_tool.today() in lis:
+            lis.remove(self.__date_tool.today())
         return lis[min_date_index:]
 
     def vaild_intraday_day(self,name, day):

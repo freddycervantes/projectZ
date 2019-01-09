@@ -31,7 +31,8 @@ class GetItems:
                     'COG': 'Cabot Oil & Gas', 'HPE': 'Hewlett Pakard', 'TEVA': 'TEVA Pharmaceutical', 'HBAN': 'Huntington Bcshs',
                     'MAT': 'Mattel', 'Dal': 'Delta air line', 'EPD': 'Enterprise Product Partners', 'X': 'US Steel',
                     'PE': 'Parley Energy', 'LYG': 'Lloyds Banking', 'TAK': 'Takeda Pharm', 'NLY': 'Annaly Capital',
-                    'FOXA': 'Fox Net', 'MO': 'Altria Gropu', 'RRC': 'Range Resoruces', 'KR': 'Kroger Co'}
+                    'FOXA': 'Fox Net', 'MO': 'Altria Gropu', 'RRC': 'Range Resoruces', 'KR': 'Kroger Co',
+                    'CHK': 'Chesapeake energy', 'GRPN': 'Groupon'}
 
     def approved_stocks(self):
         """
@@ -56,6 +57,20 @@ class GetItems:
         """
         x = self.approved_stocks()
         return name in x
+
+    def get_name(self, ticker):
+        """
+        :param ticker:
+        :return: actual company name
+        >>> G = GetItems()
+        >>> G.get_name("SPY")
+        'S&P'
+        >>> G.get_name("FLOOD")
+        False
+        """
+        if ticker not in self.__stockKeys.keys():
+            return False
+        return self.__stockKeys[ticker]
 
 
 if __name__=="__main__":

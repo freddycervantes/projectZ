@@ -6,7 +6,7 @@
 class Read:
 
     def __init__(self):
-        self.__F = self.__import_format()
+        self.__format = self.__import_format()
         self.__db = self.__import_sqlite()
 
     def __import_format(self):
@@ -31,7 +31,7 @@ class Read:
             return False
         conn = self.__db.connect("stockdata.db")
         c = conn.cursor()
-        c.execute(self.__F.read_intraday_table_all(name))
+        c.execute(self.__format.read_intraday_table_all(name))
         raw = [list(i) for i in c.fetchall()]
         c.close()
         conn.close()
@@ -39,7 +39,30 @@ class Read:
         for i in raw:
             clensed += i[1:]
         clensed = [i for i in clensed if i != -1]
-        return clensed
+        # Append the rest of today
+        return clensed + self.append_today(name)
+
+    def append_today(self, name):
+        """
+        :param name: ticker
+        :return: list of today
+        >>> R = Read()
+        >>> R.append_today("SPY")
+        []
+        >>> len(R.append_today("XRX")) > 0
+        True
+        """
+        import write_dat
+        import occasion
+        import fetch_data
+        W = write_dat.Write()
+        sqlkey = self.__format.write_date(occasion.Occasion().today())
+        if W.key_in_table(name, sqlkey):
+            return []
+        F = fetch_data.Fetch()
+        return [i for i in F.intraday_average_price(name, occasion.Occasion().today()) if i != -1]
+
+
 
     def table_exists(self, tablename):
         """
