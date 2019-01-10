@@ -12,6 +12,7 @@ class Write:
         """
         self.__F = self.__import_format()
         self.__db = self.__import_sqlite()
+        self.__O = self.__import_occasion()
         dbconn = self.__db.connect('stockdata.db')  # Opens up database, creates one if it does not exist
         c = dbconn.cursor()
         try:
@@ -32,6 +33,10 @@ class Write:
         import sqlite3
         return sqlite3
 
+    def __import_occasion(self):
+        import occasion
+        return occasion.Occasion()
+
     def day_in_database(self, day, name):
         """
         This method ensures no redundant requests are called to the iex server
@@ -49,6 +54,22 @@ class Write:
         """
         sqlkey = self.__F.write_date(day)
         return self.key_in_table(name, sqlkey)
+
+    def store5(self, ticker):
+        t = ticker + "5"
+        start, end = self.__O.five_years()
+        if not self.table_exists(t):
+            self.__update5(t, start, end)
+        else:
+            start = self.__find_start(t)
+            self.__update5(t, start, end)
+
+    def __find_start(self, t):
+        return self.__O.get_date(2018, 10, 2)
+
+    def __update5(self, ticker, start, end):
+        table = ""
+
 
     def store3(self, ticker, date, data):
         """
@@ -78,24 +99,16 @@ class Write:
         """
         if len(data) == 0:
             return False
-        Write().pad_data(data)                                  # ensures if the data exists it is of proper length
+        Write().__pad_data(data)                                # ensures if the data exists it is of proper length
         if self.in_whitelist(ticker):                           # no script kiddes ya lil shits
             date = self.__F.write_date(date)                    # formatting so db requests can be a specific range
             return self.put_in_stockdata(ticker, date, data)    # ensures data was properly placed
         return False
 
     @staticmethod
-    def pad_data(data):
+    def __pad_data(data):
         """
         Since there are half trading days, this pads it with -1's
-        >>> data = [i for i in range(100)]
-        >>> len(data)
-        100
-        >>> Write.pad_data(data)
-        >>> len(data)
-        390
-        >>> data
-        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
         """
         while len(data) < 390:
             data += [-1]

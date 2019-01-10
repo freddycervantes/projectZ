@@ -83,7 +83,7 @@ class StockDev:
 
 
 if __name__ == '__main__':
-    spy = StockDev("CHK")
+    spy = StockDev("CAG")
     spy.say_state()
     spy.plot_with_dev()
     print("welcome")

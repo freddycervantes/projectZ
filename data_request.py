@@ -17,6 +17,7 @@ class GetData:
     def __get_stock():
         import stock
         return stock
+
     @staticmethod
     def __get_update():
         import update_database
@@ -43,6 +44,12 @@ class GetData:
             return False
         return self.__organize.all_intraday(name)
 
+    def whitelist(self):
+        """
+        :return: list of whitelisted stocks, useful for stats
+        """
+        return self.__whitelist
+
     def add_stock(self, name):
         if name not in self.__whitelist:
             return False
@@ -55,9 +62,8 @@ class GetData:
 
     def add_all_stocks(self):
         """
-        :param name: ticker
-        :return: Stock() object
         note this tests add_stock and get_stock as well
+
         >>> G = GetData()
         >>> G.add_stock("NONEXIST")
         False
@@ -72,7 +78,6 @@ class GetData:
             self.add_stock(i)
 
 
-
-if __name__=="__main__":
+if __name__ == "__main__":
     import doctest
     doctest.testmod()

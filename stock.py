@@ -6,9 +6,11 @@
 class Stock:
 
     def __init__(self, ticker, intraday_data, five_year_data):
+        # stock specs
         self.__whitelist = self.__get_whitelist()
         self.__np = self.__get_numpy()
         self.__ticker = ticker
+        self.__curr_price = intraday_data[len(intraday_data) - 1]
 
         # intraday specs
         self.__intraday_data = intraday_data
@@ -58,137 +60,62 @@ class Stock:
         import whitelist
         return whitelist.GetItems()
 
-    def name(self):
-        """
-        :return: name
-        >>> tick = Stock("SPY", [i**2 for i in range(10)], [i**2 for i in range(10)])
-        >>> tick.name()
-        'S&P'
-        >>> tick = Stock("TEST", [i**2 for i in range(10)], [i**2 for i in range(10)])
-        >>> tick.name()
-        'TEST'
-        """
+    def curr_price(self):  #
+        return self.__curr_price
+
+    def name(self):  #
+        """:return: name if in whitelist, else just ticker"""
         if  self.__ticker not in self.__whitelist.approved_stocks():
             return self.__ticker
         return self.__whitelist.get_name(self.__ticker)
 
     # Five year functions
     ##############################################################################################
-    def five_data(self):
-        """
-        :return: list of 5 year data
-        >>> tick = Stock("SPX", [i**2 for i in range(10)], [i**2 for i in range(10)])
-        >>> tick.five_data()
-        [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
-        """
+    def five_data(self):  #
+        """:return: list of 5 year data"""
         return self.__five_year_data
 
-    def five_std_from_mean(self):
-        """
-        :return: x coefficent
-        >>> tick = Stock("SPX", [i**2 for i in range(10)], [i**2 for i in range(10)])
-        >>> int(tick.five_std_from_mean()*100000)/100000.0
-        1.47709
-        >>> tick = Stock("SPX", [i**2 for i in range(1)], [i**2 for i in range(1)])
-        >>> tick.five_std_from_mean()
-        0.0
-        """
+    def five_std_from_mean(self):  #
+        """:return: current price minus the line divided by std"""
         return self.__five_from_mean
 
-    def five_std(self):
-        """
-        :return: x coefficent
-        >>> tick = Stock("SPX", [i**2 for i in range(10)], [i**2 for i in range(10)])
-        >>> int(tick.five_std()*100000)/100000.0
-        8.12403
-        >>> tick = Stock("SPX", [i**2 for i in range(1)], [i**2 for i in range(1)])
-        >>> tick.five_std()
-        0.0
-        """
+    def five_std(self):  #
+        """:return: standard deviation of all data from line"""
         return self.__five_sd
 
-    def five_year_m(self):
-        """
-        :return: x coefficent
-        >>> tick = Stock("SPX", [i**2 for i in range(10)], [i**2 for i in range(10)])
-        >>> tick.five_year_m()
-        -12.0
-        >>> tick = Stock("SPX", [i**2 for i in range(1)], [i**2 for i in range(1)])
-        >>> tick.five_year_m()
-        0.0
-        """
+    def five_year_m(self):  #
+        """:return: x coefficent"""
         return self.__five_b
 
-    def five_year_b(self):
-        """
-        :return: scalar
-        >>> tick = Stock("SPX", [i**2 for i in range(10)], [i**2 for i in range(10)])
-        >>> tick.five_year_b()
-        -12.0
-        >>> tick = Stock("SPX", [i**2 for i in range(1)], [i**2 for i in range(1)])
-        >>> tick.five_year_b()
-        0.0
-        """
+    def five_year_b(self):  #
+        """:return: y = mx + it b like that sometimes"""
         return self.__five_b
 
     ##############################################################################################
 
     # Intraday funcs
     ##############################################################################################
-    def intraday_data(self):
-        """
-        :return: list of 5 year data
-        >>> tick = Stock("SPX", [i**2 for i in range(10)], [i**2 for i in range(10)])
-        >>> tick.intraday_data()
-        [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
-        """
+    def intraday_data(self):  #
+        """:return: list of intraday data"""
         return self.__intraday_data
 
-    def intraday_std_from_mean(self):
-        """
-        :return: x coefficent
-        >>> tick = Stock("SPX", [i**2 for i in range(10)], [i**2 for i in range(10)])
-        >>> int(tick.intraday_std_from_mean()*100000)/100000.0
-        1.47709
-        >>> tick = Stock("SPX", [i**2 for i in range(1)], [i**2 for i in range(1)])
-        >>> tick.intraday_std_from_mean()
-        0.0
-        """
+    def intraday_std_from_mean(self): #
+        """:return: x coefficent"""
         return self.__intra_from_mean
 
-    def intraday_std(self):
-        """
-        :return: x coefficent
-        >>> tick = Stock("SPX", [i**2 for i in range(10)], [i**2 for i in range(10)])
-        >>> int(tick.intraday_std()*100000)/100000.0
-        8.12403
-        >>> tick = Stock("SPX", [i**2 for i in range(1)], [i**2 for i in range(1)])
-        >>> tick.intraday_std()
-        0.0
-        """
+    def intraday_std(self):  #
+        """:return: x coefficent"""
         return self.__intra_sd
 
-    def intraday_m(self):
+    def intraday_m(self):  #
         """
-        :return: x coefficent
-        >>> tick = Stock("SPX", [i**2 for i in range(10)], [i**2 for i in range(10)])
-        >>> tick.intraday_m()
-        9.0
-        >>> tick = Stock("SPX", [i**2 for i in range(1)], [i**2 for i in range(1)])
-        >>> tick.intraday_m()
-        0.0
+        :return: x coefficient intraday
         """
         return self.__intra_m
 
-    def intraday_b(self):
+    def intraday_b(self):  #
         """
-        :return: scalar
-        >>> tick = Stock("SPX", [i**2 for i in range(10)], [i**2 for i in range(10)])
-        >>> tick.intraday_b()
-        -12.0
-        >>> tick = Stock("SPX", [i**2 for i in range(1)], [i**2 for i in range(1)])
-        >>> tick.intraday_b()
-        0.0
+        :return: y = mx intraday b
         """
         return self.__intra_b
     ##############################################################################################
@@ -196,5 +123,4 @@ class Stock:
 
 if __name__ == "__main__":
     import doctest
-
     doctest.testmod()
