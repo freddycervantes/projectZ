@@ -100,23 +100,19 @@ class Stock:
         return self.__intraday_data
 
     def intraday_std_from_mean(self): #
-        """:return: x coefficent"""
+        """:return: how many standard deviations from the mean"""
         return self.__intra_from_mean
 
     def intraday_std(self):  #
-        """:return: x coefficent"""
+        """:return: intra standard deviation"""
         return self.__intra_sd
 
     def intraday_m(self):  #
-        """
-        :return: x coefficient intraday
-        """
+        """:return: x coefficient intraday"""
         return self.__intra_m
 
     def intraday_b(self):  #
-        """
-        :return: y = mx intraday b
-        """
+        """:return: y = mx intraday b"""
         return self.__intra_b
     ##############################################################################################
 

@@ -25,33 +25,28 @@ class Write:
         dbconn.commit()
         dbconn.close()
 
-    def __import_format(self):
+    @staticmethod
+    def __import_format():
         import format
         return format.Format()
 
-    def __import_sqlite(self):
+    @staticmethod
+    def __import_sqlite():
         import sqlite3
         return sqlite3
 
-    def __import_occasion(self):
+    @staticmethod
+    def __import_occasion():
         import occasion
         return occasion.Occasion()
 
-    def day_in_database(self, day, name):
+    def day_in_database(self, day, name):  #
         """
         This method ensures no redundant requests are called to the iex server
         :param day: datetime.datetime(year, month, day)
         :param name: ticker
-        :return: True if day is in table, False else
-        >>> import occasion
-        >>> ticker = "SPY"
-        >>> date = occasion.Occasion().get_date(2019,1,3)
-        >>> m = Write()
-        >>> m.day_in_database(date, ticker)
-        True
-        >>> m.day_in_database(occasion.Occasion().get_date(1999, 1, 1), ticker)
-        False
-        """
+        :return: True if day is in table, False else"""
+
         sqlkey = self.__F.write_date(day)
         return self.key_in_table(name, sqlkey)
 
@@ -70,33 +65,11 @@ class Write:
     def __update5(self, ticker, start, end):
         table = ""
 
-
-    def store3(self, ticker, date, data):
-        """
-        A storage method for long term use
+    def store3(self, ticker, date, data):  #
+        """A storage method for long term use
         :param date: datetime.datetime(year, month, day)
         :param data: list of values for each recorded minute
-        :return: True if a successful put, False else
-
-        >>> ticker = "SPY"
-        >>> from occasion import Occasion
-        >>> date = Occasion().get_date(2019,1,3)
-        >>> from iexfinance.stocks import get_historical_intraday
-        >>> x = [i['average'] for i in get_historical_intraday(ticker, date)]
-        >>> m = Write()
-        >>> m.store3(ticker, date, x)
-        False
-        >>> ticker = "XRX"
-        >>> x = [i['average'] for i in get_historical_intraday(ticker, date)]
-        >>> m.store3(ticker, date, x)
-        True
-        >>> m.store3(ticker, date, [])
-        False
-        >>> m.remove_table(ticker)
-        >>> m.store3(ticker, date, [1])
-        True
-        >>> m.remove_table(ticker)
-        """
+        :return: True if a successful put, False else"""
         if len(data) == 0:
             return False
         Write().__pad_data(data)                                # ensures if the data exists it is of proper length
@@ -107,42 +80,18 @@ class Write:
 
     @staticmethod
     def __pad_data(data):
-        """
-        Since there are half trading days, this pads it with -1's
-        """
+        """Since there are half trading days, this pads it with -1's"""
         while len(data) < 390:
             data += [-1]
 
     @staticmethod
-    def in_whitelist(name):
-        """
-        Anti-sql injection
-        :param name: List of approved Stocks
-        :return: True if okay, False if not
-        >>> Write.in_whitelist("GE")
-        True
-        >>> Write.in_whitelist("SPX")
-        False
-        """
+    def in_whitelist(name):  #
+        """Anti-sql injection :return: True if okay, False if not"""
         import whitelist
         return whitelist.GetItems().whitelisted(name)
 
-    def key_in_table(self, name, sqlkey):
-        """
-        :param name: Ticker
-        :param sqlkey: date
-        :return: True if key exists, else false
-        >>> t = Write()
-        >>> t.key_in_table("SPX", 19991231)
-        False
-        >>> t.put_in_stockdata("SPX", 19991231, [i for i in range(390)])
-        True
-        >>> t.key_in_table("SPX", 19991231)
-        True
-        >>> t.key_in_table("SPX", 19991232)
-        False
-        >>> t.remove_table("SPX")
-        """
+    def key_in_table(self, name, sqlkey):  #
+        """:return: True if key exists, else false"""
         if not self.table_exists(name):                 # does the table exist at all?
             return False
         dbconn = self.__db.connect('stockdata.db')
@@ -160,27 +109,10 @@ class Write:
         dbconn.close()
         return False
 
-    def put_in_stockdata(self, name, sqlkey, data):
-        """
-        properly formatted and ready to insert into stockdata.db
-        :param name: Ticker
-        :param sqlkey: date formatted
+    def put_in_stockdata(self, name, sqlkey, data):  #
+        """ properly formatted and ready to insert into stockdata.db
         :param data: list of 390 reals
-        :return: True if inserted, False if already exists
-
-        >>> t = Write()
-        >>> t.table_exists("SPX")
-        False
-        >>> t.put_in_stockdata("SPX", 19991231,[i for i in range(390)])
-        True
-        >>> t.table_exists("SPX")
-        True
-        >>> t.put_in_stockdata("SPX", 19991231,[i for i in range(390)])
-        False
-        >>> t.put_in_stockdata("SPX", 19991232,[i for i in range(390)])
-        True
-        >>> t.remove_table("SPX")
-        """
+        :return: True if inserted, False if already exists"""
         dbconn = self.__db.connect('stockdata.db')
         c = dbconn.cursor()
         if not self.table_exists(name):                   # if not in database, create it
@@ -195,27 +127,9 @@ class Write:
         dbconn.close()
         return True
 
-    def table_exists(self, tablename):
-        """
-        Ensures the table exist from the onRecord table.
-        :return: boolean function
-        >>> import sqlite3
-        >>> dbconn = sqlite3.connect('stockdata.db')
-        >>> c = dbconn.cursor()
-        >>> x = c.execute("INSERT INTO onRecord VALUES ('TEST')")
-        >>> dbconn.commit()
-        >>> t = Write()
-        >>> t.table_exists("TEST")
-        True
-        >>> t.table_exists("test1")
-        False
-        >>> x = c.execute("DELETE FROM onRecord WHERE stock = 'TEST'")
-        >>> dbconn.commit()
-        >>> t.table_exists("TEST")
-        False
-        >>> c.close()
-        >>> dbconn.close()
-        """
+    def table_exists(self, tablename):  #
+        """Ensures the table exist from the onRecord table.
+        :return: True if table exists, else False"""
         dbconn = self.__db.connect('stockdata.db')
         c = dbconn.cursor()
         c.execute("""
@@ -230,19 +144,8 @@ class Write:
         dbconn.close()
         return False
 
-    def create_table(self, name):
-        """
-        Creates a table with name as name
-        :param name: Stock Ticker
-        :return: True if successful, False else
-
-        >>> t = Write()
-        >>> t.create_table("SPX")
-        True
-        >>> t.create_table("SPX")
-        False
-        >>> t.remove_table("SPX")
-        """
+    def create_table(self, name):  #
+        """:return: True if successful, False else"""
         dbconn = self.__db.connect('stockdata.db')
         c = dbconn.cursor()
         if self.table_exists(name):               #avoids redundancy
@@ -257,19 +160,8 @@ class Write:
         dbconn.close()
         return True
 
-    def remove_table(self, name):
-        """
-        tableflip.jpg
-        :param name: ticker
-        >>> t = Write()
-        >>> t.create_table("SPX")
-        True
-        >>> t.table_exists("SPX")
-        True
-        >>> t.remove_table("SPX")
-        >>> t.table_exists("SPX")
-        False
-        """
+    def remove_table(self, name): #
+        """tableflip.jpg :param name: ticker"""
         dbconn = self.__db.connect('stockdata.db')
         c = dbconn.cursor()
         c.execute("DELETE FROM onRecord WHERE stock = '{}'".format(name))   # Wether it exists or not does not matter papa bless
@@ -280,8 +172,3 @@ class Write:
             dbconn.commit()
         c.close()
         dbconn.close()
-
-
-if __name__=="__main__":
-    import doctest
-    doctest.testmod()

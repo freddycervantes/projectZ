@@ -32,33 +32,6 @@ def test_format():
     """
     return
 
-def test_occastion():
-    """
-    >>> from occasion import Occasion
-    >>> O = Occasion()
-    >>> O.get_date(1987, 7, 28)             # Occasion get_date
-    datetime.datetime(1987, 7, 28, 0, 0)
-    >>> Occasion().today().year             # Occasion today
-    2019
-    >>> x = O.five_years()                  # Occasion five_years
-    >>> x[0].year
-    2014
-    >>> x[1].year
-    2019
-    >>> x = O.ninedy_days()                 # Occasion ninedy_days
-    >>> x[0].year*10000 + x[0].month*100 + x[0].day <  x[89].year*10000 + x[89].month*100 + x[89].day
-    True
-    >>> O.today() == x[89]
-    True
-    """
-    return None
-
-
-def test_write_dat():
-    """
-
-    """
-    return None
 
 def test_stock():
     """
@@ -105,12 +78,116 @@ def test_stock():
     0.0
     >>> int(tick.intraday_std()*100000)/100000.0        # Stock intraday_std
     8.12403
-    >>> tick.intraday_std()
+    >>> tock.intraday_std()
     0.0
     """
     return None
 
 
-if __name__=="__main__":
+def test_occastion():
+    """
+    >>> from occasion import Occasion
+    >>> O = Occasion()
+    >>> O.get_date(1987, 7, 28)             # Occasion get_date
+    datetime.datetime(1987, 7, 28, 0, 0)
+    >>> Occasion().today().year             # Occasion today
+    2019
+    >>> x = O.five_years()                  # Occasion five_years
+    >>> x[0].year
+    2014
+    >>> x[1].year
+    2019
+    >>> x = O.ninedy_days()                 # Occasion ninedy_days
+    >>> x[0].year*10000 + x[0].month*100 + x[0].day <  x[89].year*10000 + x[89].month*100 + x[89].day
+    True
+    >>> O.today() == x[89]
+    True
+    """
+    return None
+
+
+def test_write_dat():
+    """
+    >>> import occasion
+    >>> ticker = "SPY"
+    >>> date = occasion.Occasion().get_date(2019,1,3)
+    >>> from write_dat import Write
+    >>> t = Write()
+    >>> t.day_in_database(date, ticker)                         # Write day_in_database
+    True
+    >>> t.day_in_database(occasion.Occasion().get_date(1999, 12, 31), ticker) # Y2K IS NEIGH
+    False
+    >>> from iexfinance.stocks import get_historical_intraday
+    >>> x = [i['average'] for i in get_historical_intraday(ticker, date)]
+    >>> t.store3(ticker, date, x)                               # Write store3
+    False
+    >>> ticker = "XRX"
+    >>> x = [i['average'] for i in get_historical_intraday(ticker, date)]
+    >>> t.store3(ticker, date, x)
+    True
+    >>> t.store3(ticker, date, [])
+    False
+    >>> t.table_exists(ticker)
+    True
+    >>> t.remove_table(ticker)                                  # Write remove_table, table exists
+    >>> t.table_exists(ticker)
+    False
+    >>> t.store3(ticker, date, [1])
+    True
+    >>> t.remove_table(ticker)
+    >>> Write.in_whitelist("GE")                                # Write in_whitelist
+    True
+    >>> Write.in_whitelist("SPX")
+    False
+    >>> t.key_in_table("SPX", 19991231)                         # Write key_in_table
+    False
+    >>> t.put_in_stockdata("SPX", 19991231, [i for i in range(390)])
+    True
+    >>> t.key_in_table("SPX", 19991231)
+    True
+    >>> t.key_in_table("SPX", 19991232)
+    False
+    >>> t.remove_table("SPX")
+    >>> t.table_exists("SPX")                                   # Write put_in_stockdata
+    False
+    >>> t.put_in_stockdata("SPX", 19991231,[i for i in range(390)])
+    True
+    >>> t.table_exists("SPX")
+    True
+    >>> t.put_in_stockdata("SPX", 19991231,[i for i in range(390)])
+    False
+    >>> t.put_in_stockdata("SPX", 19991232,[i for i in range(390)])
+    True
+    >>> t.remove_table("SPX")                                   # Write create_table
+    >>> t.create_table("SPX")
+    True
+    >>> t.create_table("SPX")
+    False
+    >>> t.remove_table("SPX")
+    """
+    return None
+
+
+def test_whitelist():
+    """
+    >>> from whitelist import GetItems
+    >>> x = GetItems()
+    >>> x.whitelisted("VZ")                 # GetItems whitelisted
+    True
+    >>> x.whitelisted("TEST")
+    False
+    >>> 'VZ' in x.approved_stocks()         # GetItems approved_stocks
+    True
+    >>> 'VZZ' in x.approved_stocks()
+    False
+    >>> x.get_name("SPY")                   # GetItems get_name
+    'S&P'
+    >>> x.get_name("FLOOD")
+    False
+    """
+    return None
+
+
+if __name__ == "__main__":
     import doctest
     doctest.testmod()

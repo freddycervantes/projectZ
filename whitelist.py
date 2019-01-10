@@ -34,45 +34,17 @@ class GetItems:
                     'FOXA': 'Fox Net', 'MO': 'Altria Gropu', 'RRC': 'Range Resoruces', 'KR': 'Kroger Co',
                     'CHK': 'Chesapeake energy', 'GRPN': 'Groupon', 'CAG': 'Congra'}
 
-    def approved_stocks(self):
-        """
-        :return: List of approved stocks
-        >>> x = GetItems()
-        >>> 'VZ' in x.approved_stocks()
-        True
-        >>> 'VZZ' in x.approved_stocks()
-        False
-        """
+    def approved_stocks(self):  #
+        """:return: List of approved stocks """
         return list(self.__stockKeys.keys())
 
-    def whitelisted(self, name):
-        """
-        :param name: Ticker
-        :return: True if it is okay
-        >>> x = GetItems()
-        >>> x.whitelisted("VZ")
-        True
-        >>> x.whitelisted("VJLKJ")
-        False
-        """
+    def whitelisted(self, name):  #
+        """:return: True if it is okay"""
         x = self.approved_stocks()
         return name in x
 
     def get_name(self, ticker):
-        """
-        :param ticker:
-        :return: actual company name
-        >>> G = GetItems()
-        >>> G.get_name("SPY")
-        'S&P'
-        >>> G.get_name("FLOOD")
-        False
-        """
+        """:return: actual company name"""
         if ticker not in self.__stockKeys.keys():
             return False
         return self.__stockKeys[ticker]
-
-
-if __name__=="__main__":
-    import doctest
-    doctest.testmod()
