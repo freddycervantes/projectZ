@@ -29,6 +29,12 @@ def test_format():
     False
     >>> t.read_intraday_table_all("SPY")                    # Format read_intraday_table
     'SELECT * FROM SPY ORDER BY date'
+    >>> t.make_five_table("SPX")                            # Format make_five_table
+    'CREATE TABLE SPX (date INT PRIMARY KEY, close REAL, volume INT)'
+    >>> t.write_five_day("SPX", 1234, 1.234, 1234)          # Format write_five_day
+    'INSERT INTO SPX VALUES (1234, 1.234, 1234)'
+    >>> t.date_text_to_int("2014-01-13")
+    20140113
     """
     return
 
@@ -36,10 +42,13 @@ def test_format():
 def test_stock():
     """
     >>> from stock import Stock
-    >>> tick = Stock("SPY", [i**2 for i in range(10)], [i**2 for i in range(10)])
+    >>> t = [(i**2, i**2, i) for i in range(10)]
+    >>> tick = Stock("SPY", [i**2 for i in range(10)], t)
     >>> tick.five_year_b()                              # Stock five_year_b
     -12.0
-    >>> tock = Stock("TEST", [i**2 for i in range(1)], [i**2 for i in range(1)])
+    >>> tock = Stock("TEST", [i**2 for i in range(1)], [(0, 0, 0) for i in range(1)])
+    >>> tick.five_volume()                              # Stock five_volume
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     >>> tock.five_year_b()
     0.0
     >>> tick.five_year_m()                              # Stock five_year_m
@@ -184,6 +193,30 @@ def test_whitelist():
     'S&P'
     >>> x.get_name("FLOOD")
     False
+    """
+    return None
+
+def test_fetch_data():
+    """
+    >>> import occasion
+    >>> x = occasion.Occasion()
+    >>> from fetch_data import Fetch
+    >>> F = Fetch()
+    >>> F.get_intraday_raw("SPY", x.get_date(2019, 1, 3))[0]['date']    # Fetch get_intraday_raw
+    '20190103'
+    >>> F.intraday_volume("SPY", x.get_date(2019, 1, 3))[0]             # Fetch intraday_volume
+    3759
+    >>> F.vaild_intraday_day("SPY", x.get_date(2019, 1, 3))             # Fetch valid_intraday_day
+    True
+    >>> F.vaild_intraday_day("SPY", x.get_date(2019, 1, 1))
+    False
+    >>> l = F.list_valid_intraday_dates()                               # Fetch list_valid_intraday
+    >>> x.get_date(2019, 1, 3) in l
+    True
+    >>> x.get_date(2019, 1, 1) in l
+    False
+    >>> F.intraday_average_price("SPY", x.get_date(2019, 1, 3))[0]      # intraday_average_price
+    248.407
     """
     return None
 

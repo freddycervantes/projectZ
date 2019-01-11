@@ -41,3 +41,6 @@ class Occasion:
         """
         today = self.today()
         return list(reversed([today - self.__date.timedelta(days=i) for i in range(90)]))
+
+    def add_one_day(self, day):
+        return day + self.__date.timedelta(days=1)

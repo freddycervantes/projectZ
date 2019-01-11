@@ -17,14 +17,27 @@ class Read:
         import sqlite3
         return sqlite3
 
-    def read_all(self, name):
+    def read_all_five(self, name):
+        t = name + "5"
+        if not self.table_exists(t):
+            return False
+        conn = self.__db.connect("stockdata.db")
+        c = conn.cursor()
+        c.execute(self.__format.read_five_all(t))
+        raw = c.fetchall()
+        c.close()
+        conn.close()
+        return raw
+
+
+    def read_all_intra(self, name):
         """
         :param name: Ticker
         :return: All clensed data from a specific ticker.
         >>> R = Read()
-        >>> R.read_all("FDHKJH")
+        >>> R.read_all_intra("FDHKJH")
         False
-        >>> R.read_all("SPY")[0]
+        >>> R.read_all_intra("SPY")[0]
         271.593
         """
         if not self.table_exists(name):

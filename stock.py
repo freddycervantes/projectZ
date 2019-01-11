@@ -11,20 +11,22 @@ class Stock:
         self.__np = self.__get_numpy()
         self.__ticker = ticker
         self.__curr_price = intraday_data[len(intraday_data) - 1]
+        self.__vol = [i[2] for i in five_year_data]
+        self.__dates = [i[0] for i in five_year_data]
 
         # intraday specs
         self.__intraday_data = intraday_data
         self.__intra_data_count = len(self.__intraday_data)
         self.__intra_m, self.__intra_b = self.__linear_coefficents(self.__intraday_data)
         self.__intra_sd, self.__intra_from_mean = self.__find_standard_deviation(self.__intra_m,
-                                                                                 self.__intra_b, intraday_data)
+                                                                                 self.__intra_b, self.__intraday_data)
 
         # five year specs
-        self.__five_year_data = five_year_data
+        self.__five_year_data = [i[1] for i in five_year_data]
         self.__five_data_count = len(self.__five_year_data)
         self.__five_m, self.__five_b = self.__linear_coefficents(self.__five_year_data)
         self.__five_sd, self.__five_from_mean = self.__find_standard_deviation(self.__five_m,
-                                                                               self.__five_b, five_year_data)
+                                                                               self.__five_b, self.__five_year_data)
 
     @staticmethod
     def __get_numpy():
@@ -71,6 +73,14 @@ class Stock:
 
     # Five year functions
     ##############################################################################################
+    def five_volume(self):  #
+        """:return: list of 5 year vol"""
+        return self.__vol
+
+    def five_dates(self):
+        """:return: ordered dates"""
+        return self.__dates
+
     def five_data(self):  #
         """:return: list of 5 year data"""
         return self.__five_year_data

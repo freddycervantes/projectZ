@@ -13,6 +13,7 @@ class Write:
         self.__F = self.__import_format()
         self.__db = self.__import_sqlite()
         self.__O = self.__import_occasion()
+        self.__Fetch = self.__import_fetch_data()
         dbconn = self.__db.connect('stockdata.db')  # Opens up database, creates one if it does not exist
         c = dbconn.cursor()
         try:
@@ -40,6 +41,11 @@ class Write:
         import occasion
         return occasion.Occasion()
 
+    @staticmethod
+    def __import_fetch_data():
+        import fetch_data
+        return fetch_data.Fetch()
+
     def day_in_database(self, day, name):  #
         """
         This method ensures no redundant requests are called to the iex server
@@ -50,20 +56,78 @@ class Write:
         sqlkey = self.__F.write_date(day)
         return self.key_in_table(name, sqlkey)
 
-    def store5(self, ticker):
+    def store5(self, ticker):  # #######
+        """
+        >>> W = Write()
+        >>> import sqlite3
+        >>> dbconn = sqlite3.connect("stockdata.db")
+        >>> import occasion
+        >>> c = dbconn.cursor()
+        >>> W.store5("XRXXX")
+        False
+        >>> W.store5("XRX")
+        True
+        >>> W.store5("XRX")
+        False
+        >>> x = c.execute("SELECT MAX(date) FROM XRX5")
+        >>> day = c.fetchall()[0][0]
+        >>> x = c.execute("DELETE FROM XRX5 WHERE date = {}".format(day))
+        >>> dbconn.commit()
+        >>> W.store5("XRX")
+        True
+        >>> x = c.execute("DELETE FROM onRecord WHERE stock = 'XRX5'")
+        >>> x = c.execute("DROP TABLE XRX5")
+        >>> c.close()
+        >>> dbconn.commit()
+        >>> dbconn.close()
+        """
+        import whitelist
+        if ticker not in whitelist.GetItems().approved_stocks():
+            return False
         t = ticker + "5"
         start, end = self.__O.five_years()
         if not self.table_exists(t):
-            self.__update5(t, start, end)
+            self.__create_five_table(t)
+            self.__update5(ticker, start, end)
         else:
             start = self.__find_start(t)
-            self.__update5(t, start, end)
+            if start == end:
+                return False
+            start = self.__O.add_one_day(start)
+            self.__update5(ticker, start, end)
+        return True
 
-    def __find_start(self, t):
-        return self.__O.get_date(2018, 10, 2)
+    def __create_five_table(self, name):
+        dbconn = self.__db.connect('stockdata.db')
+        c = dbconn.cursor()
+        c.execute("""INSERT INTO onRecord VALUES ('{}')""".format(name))
+        new_table = self.__F.make_five_table(name)
+        c.execute(new_table)
+        c.close()
+        dbconn.commit()
+        dbconn.close()
 
-    def __update5(self, ticker, start, end):
-        table = ""
+    def __find_start(self, t):  # #########
+        dbconn = self.__db.connect('stockdata.db')
+        c = dbconn.cursor()
+        c.execute("SELECT MAX(date) FROM {}".format(t))
+        day = c.fetchall()[0][0]
+        year, month, day = int(day/10000), int((day % 10000)/100), day % 100
+        c.close()
+        dbconn.close()
+        return self.__O.get_date(year, month, day)
+
+    def __update5(self, ticker, start, end):  # #########
+        date_map = self.__Fetch.get_raw_days(ticker, start, end)
+        t = ticker + "5"
+        dbconn = self.__db.connect('stockdata.db')
+        c = dbconn.cursor()
+        for i in date_map.keys():
+            new_input = self.__F.write_five_day(t, self.__F.date_text_to_int(i), date_map[i]['close'], date_map[i]['volume'])
+            c.execute(new_input)
+        c.close()
+        dbconn.commit()
+        dbconn.close()
 
     def store3(self, ticker, date, data):  #
         """A storage method for long term use
@@ -172,3 +236,7 @@ class Write:
             dbconn.commit()
         c.close()
         dbconn.close()
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

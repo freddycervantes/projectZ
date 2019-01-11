@@ -78,12 +78,12 @@ class StockDev:
         self.__b = b[1]
 
     def __y_outputs(self, name):
-        self.__y = self.__R.read_all(name)
+        self.__y = self.__R.read_all_intra(name)
         self.__num_data_points = len(self.__y)
 
 
 if __name__ == '__main__':
-    spy = StockDev("CAG")
+    spy = StockDev("BBD")
     spy.say_state()
     spy.plot_with_dev()
     print("welcome")

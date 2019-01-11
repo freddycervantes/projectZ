@@ -122,7 +122,7 @@ class StockDev:
 
 
 if __name__ == '__main__':
-    spy = StockDev("CAG")
+    spy = StockDev("BBD")
     spy.say_state()
     print(spy.get_dev_from_mean())
     spy.plot_with_dev()

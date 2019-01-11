@@ -52,18 +52,28 @@ class Format:
     # Yearly fucntions
     #####################################################################################################
     @staticmethod
-    def write_five_day(name, sqlkey, close, volume):
-        """
-        :return: Formatted for a single day entry on the sql table
-        """
-        s = "INSERT INTO {} VALUES ({}, {}, {}) ".format(name, sqlkey, close, volume)
+    def write_five_day(name, sqlkey, close, volume):  #
+        """:return: Formatted for a single day entry on the sql tabl"""
+        s = "INSERT INTO {} VALUES ({}, {}, {})".format(name, sqlkey, close, volume)
+        return s
+
+    @staticmethod
+    def make_five_table(name):  #
+        """:return: formated table with volume and price for each date"""
+        return "CREATE TABLE {} (date INT PRIMARY KEY, close REAL, volume INT)".format(name)
+
+    @staticmethod
+    def read_five_all(name):
+        return "SELECT * FROM {} ORDER BY date".format(name)
 
     # Other
     #####################################################################################################
     @staticmethod
-    def write_date(date):
-        """
-        :date:      datetime.datetime(year, month, day)
-        :return:    Integer with yearmonthday
-        """
+    def write_date(date):  #
+        """:date:      datetime.datetime(year, month, day)
+        :return:    Integer with yearmonthday """
         return date.year*10000 + date.month*100 + date.day     # I like turtles
+
+    @staticmethod
+    def date_text_to_int(date):
+        return int(date[:4])*10000 + int(date[5:7])*100 + int(date[8:])

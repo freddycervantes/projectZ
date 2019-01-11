@@ -44,6 +44,11 @@ class GetData:
             return False
         return self.__organize.all_intraday(name)
 
+    def __get_all_five(self, name):
+        if name not in  self.whitelist():
+            return False
+        return self.__organize.all_5_year(name)
+
     def whitelist(self):
         """
         :return: list of whitelisted stocks, useful for stats
@@ -53,7 +58,7 @@ class GetData:
     def add_stock(self, name):
         if name not in self.__whitelist:
             return False
-        self.__stocks[name] = self.__stock_gen.Stock(name, self.__get_all_intraday(name), [i**2 for i in range(10)])
+        self.__stocks[name] = self.__stock_gen.Stock(name, self.__get_all_intraday(name), self.__get_all_five(name))
 
     def get_stock(self, name):
         if name not in self.__stocks.keys():

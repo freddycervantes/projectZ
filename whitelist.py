@@ -32,7 +32,7 @@ class GetItems:
                     'MAT': 'Mattel', 'Dal': 'Delta air line', 'EPD': 'Enterprise Product Partners', 'X': 'US Steel',
                     'PE': 'Parley Energy', 'LYG': 'Lloyds Banking', 'TAK': 'Takeda Pharm', 'NLY': 'Annaly Capital',
                     'FOXA': 'Fox Net', 'MO': 'Altria Gropu', 'RRC': 'Range Resoruces', 'KR': 'Kroger Co',
-                    'CHK': 'Chesapeake energy', 'GRPN': 'Groupon', 'CAG': 'Congra'}
+                    'CHK': 'Chesapeake energy', 'GRPN': 'Groupon', 'CAG': 'Congra', 'PCG': 'Pacific Gas and electric'}
 
     def approved_stocks(self):  #
         """:return: List of approved stocks """

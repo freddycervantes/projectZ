@@ -16,52 +16,27 @@ class Fetch:
         import occasion
         return occasion.Occasion()
 
-    def get_intraday_raw(self, name, date):
-        """
-        need to update price every 3 months
+    def get_intraday_raw(self, name, date):  #
+        """need to update price every 3 months
         :param name: ticker
         :param date: datetime.datetime.(year, month, day)
-        :return: list of raw data
-        >>> import occasion
-        >>> x = occasion.Occasion()
-        >>> Fetch().get_intraday_raw("SPY", x.get_date(2019, 1, 3))[0]['date']
-        '20190103'
-        """
+        :return: list of raw data"""
         return self.__iex.stocks.get_historical_intraday(name, date)
 
-    def intraday_volume(self, name, date):
-        """
-        need to update tests every 3 months
-        :param name: ticker
-        :param date: datetime.datetime.(year, month, day)
-        :return: list of volumes for a given min
-        >>> import occasion
-        >>> x = occasion.Occasion()
-        >>> Fetch().intraday_volume("SPY", x.get_date(2019, 1, 3))[0]
-        3759
-        """
+    def intraday_volume(self, name, date):  #
+        """:param date: datetime.datetime.(year, month, day)
+        :return: list of volumes for a given min"""
         return [i['volume'] for i in self.get_intraday_raw(name, date)]
 
-    def intraday_average_price(self, name, date):
-        """
-        need to update tests every 3 months
-        :return: list of average prices per minute
-        >>> import occasion
-        >>> x = occasion.Occasion()
-        >>> Fetch().intraday_average_price("SPY", x.get_date(2019, 1, 3))[0]
-        248.407
-        """
+    def intraday_average_price(self, name, date):  #
+        """:return: list of average prices per minute"""
         return [i['average'] for i in self.get_intraday_raw(name, date)]
 
+    def get_raw_days(self, name, start, end):
+        return self.__iex.stocks.get_historical_data(name, start, end)
 
     def get_five_year_raw(self, name):
-        """
-        HTF DO YOU TEST THIS??!!
-        :param name:
-        :return:
-        >>> 0==0
-        True
-        """
+        """raw 5 year data"""
         start, end = self.__date_tool.five_years()
         return self.__iex.stocks.get_historical_data(name, start, end)
 
@@ -72,21 +47,11 @@ class Fetch:
 
         """
         raw = list(self.get_five_year_raw(name).keys())
-        return [self.__date_tool.get_date(int(i[0:4]), int(i[5:7]), int(i[8:10])) for i in raw if i != self.__date_tool.today()]
+        return [self.__date_tool.get_date(int(i[0:4]), int(i[5:7]), int(i[8:10])) for i in raw]
 
-    def list_valid_intraday_dates(self):
-        """
-        :return: List of valid intraday dates
-        Binary search for smallest dates possible
-        >>> F = Fetch()
-        >>> import occasion
-        >>> O = occasion.Occasion()
-        >>> l = F.list_valid_intraday_dates()
-        >>> O.get_date(2019, 1, 3) in l
-        True
-        >>> O.get_date(2019, 1, 1) in l
-        False
-        """
+    def list_valid_intraday_dates(self):  #
+        """:return: List of valid intraday dates
+        Binary search for smallest dates possible"""
         lis = self.five_year_dates("SPY")
         lis = lis[len(lis) - 129:]
         min_date_index = 128
@@ -105,19 +70,8 @@ class Fetch:
             lis.remove(self.__date_tool.today())
         return lis[min_date_index:]
 
-    def vaild_intraday_day(self,name, day):
-        """
-        :param day: datetime.datetime(year, month, day)
-        :param name: Ticker
-        :return: smallest list possible
-        >>> import occasion
-        >>> O = occasion.Occasion()
-        >>> F = Fetch()
-        >>> F.vaild_intraday_day("SPY", O.get_date(2019, 1, 3))
-        True
-        >>> F.vaild_intraday_day("SPY", O.get_date(2019, 1, 1))
-        False
-        """
+    def vaild_intraday_day(self,name, day):  #
+        """:return: true if day is on record"""
         return self.__iex.stocks.get_historical_intraday(name, day) != []
 
 

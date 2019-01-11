@@ -45,11 +45,22 @@ class Update:
             print(name)
         return True
 
+    def update_5_single(self, name):
+        if name not in self.__stock_list:
+            return False
+        self.__W.store5(name)
+        return True
+
     def update_all(self):
+        """
+        >>> U = Update()
+        >>> U.update_all()
+        """
         for i in self.__stock_list:
             if i == 'XRX':
                 continue
             self.update_intra_single(i)
+            self.update_5_single(i)
 
 
 if __name__=="__main__":
